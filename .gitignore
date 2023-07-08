@@ -33,3 +33,10 @@ lerna-debug.log*
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
+
+.env
+
+# database
+/prisma/db.sqlite
+/prisma/db.sqlite-journal
+/prisma/migrations
