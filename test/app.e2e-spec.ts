@@ -154,4 +154,20 @@ describe('App e2e', () => {
       });
     });
   });
+
+  describe('User', () => {
+    describe('Profile', () => {
+      it('Should throw exception if invalid access token', () => {
+        return pactum.spec().get('/users/profile').expectStatus(401);
+      });
+
+      it('Should get current user info', () => {
+        return pactum
+          .spec()
+          .get('/users/profile')
+          .withHeaders({ Authorization: 'Bearer $S{userAt}' })
+          .expectStatus(200);
+      });
+    });
+  });
 });
