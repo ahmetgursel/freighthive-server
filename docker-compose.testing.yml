@@ -1,0 +1,12 @@
+version: '3.8'
+services:
+  test-db:
+    container_name: test-db
+    image: postgres:14.1-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=123456
+      - POSTGRES_DB=freighthive
+    ports:
+      - '5435:5432'

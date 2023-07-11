@@ -1,7 +1,7 @@
 version: '3.8'
 services:
-  prod-db:
-    container_name: prod-db
+  db:
+    container_name: db
     image: postgres:14.1-alpine
     restart: always
     environment:
@@ -11,13 +11,8 @@ services:
     ports:
       - '5432:5432'
     volumes:
-      - prod-db:/var/lib/postgresql/data
-    networks:
-      - freighthive
+      - db:/var/lib/postgresql/data
 
 volumes:
-  prod-db:
+  db:
     driver: local
-
-networks:
-  freighthive:
