@@ -1,10 +1,10 @@
 import { Controller, Get, HttpCode, HttpStatus } from '@nestjs/common';
 
-@Controller('healtcheck')
-export class HealtcheckController {
+@Controller('healthcheck')
+export class HealthcheckController {
   @HttpCode(HttpStatus.OK)
   @Get()
-  getHealtcheck() {
+  getHealthcheck() {
     return { status: 'OK' };
   }
 }
