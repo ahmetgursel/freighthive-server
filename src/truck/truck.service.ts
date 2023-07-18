@@ -60,4 +60,28 @@ export class TruckService {
     }
     return truck;
   }
+
+  async updateTruckById(userId: string, truckId: string, dto: UpdateTruckDto) {
+    const truck = await this.prisma.truck.findUnique({
+      where: {
+        id: truckId,
+      },
+    });
+
+    if (!truck || truck.createdById !== userId)
+      throw new ForbiddenException('Access to resources denied');
+
+    try {
+      const updatedTruck = await this.prisma.truck.update({
+        where: { id: truckId },
+        data: {
+          ...dto,
+        },
+      });
+
+      return updatedTruck;
+    } catch (error) {
+      throw new Error('Failed to update truck.');
+    }
+  }
 }
