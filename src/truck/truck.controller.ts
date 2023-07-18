@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   HttpStatus,
@@ -46,7 +47,16 @@ export class TruckController {
   @Get(':id')
   @ApiResponse({ status: 200, description: 'Get truck by ID' })
   getTruckById(@GetUser('id') userId: string, @Param('id') truckId: string) {
-    return this.truck.getTrucksById(userId, truckId);
+    return this.truck.getTruckById(userId, truckId);
+  }
+
+  @Patch(':id')
+  updateTruckById(
+    @GetUser('id') userId: string,
+    @Param('id') truckId: string,
+    @Body() dto: UpdateTruckDto,
+  ) {
+    return this.truck.updateTruckById(userId, truckId, dto);
   }
 
   @Delete(':id')

@@ -84,4 +84,27 @@ export class TruckService {
       throw new Error('Failed to update truck.');
     }
   }
+
+  async deleteTruckById(userId: string, truckId: string) {
+    try {
+      const truck = await this.prisma.truck.findUnique({
+        where: {
+          id: truckId,
+        },
+      });
+
+      if (!truck || truck.createdById !== userId)
+        throw new ForbiddenException('Access to resources denied');
+
+      await this.prisma.truck.delete({
+        where: {
+          id: truckId,
+        },
+      });
+
+      return { message: 'Truck deleted successfully.' };
+    } catch (error) {
+      throw new Error('Failed to delete truck.');
+    }
+  }
 }
