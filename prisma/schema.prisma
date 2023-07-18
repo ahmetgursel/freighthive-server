@@ -18,13 +18,32 @@ model User {
   password      String
   name          String
   role          UserRole
+  trucks        Truck[] 
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @updatedAt
 
   @@map("users")
 }
 
+model Truck {
+  id           String       @id @default(uuid())
+  plateNumber  String       @unique
+  driverName   String
+  driverPhone  String
+  capacity     Decimal
+  status       TruckStatus
+  createdBy    User         @relation(fields: [createdById], references: [id])
+  createdById  String
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+}
+
 enum UserRole {
   ADMIN
   DRIVER
+}
+
+enum TruckStatus {
+  LOADED
+  UNLOADED
 }
