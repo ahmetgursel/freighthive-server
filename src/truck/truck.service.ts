@@ -1,7 +1,7 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { CreateTruckDto } from './dto';
+import { CreateTruckDto, UpdateTruckDto } from './dto';
 
 @Injectable()
 export class TruckService {
@@ -45,5 +45,19 @@ export class TruckService {
     }
 
     return trucks;
+  }
+
+  async getTruckById(userId: string, truckId: string) {
+    const truck = await this.prisma.truck.findFirst({
+      where: {
+        createdById: userId,
+        id: truckId,
+      },
+    });
+
+    if (!truck) {
+      throw new Error('Truck not found.');
+    }
+    return truck;
   }
 }

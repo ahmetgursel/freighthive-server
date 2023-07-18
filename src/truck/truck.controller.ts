@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Patch,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
@@ -31,5 +39,11 @@ export class TruckController {
   @ApiResponse({ status: 200, description: 'Get all trucks' })
   getAllTrucks(@GetUser('id') userId: string) {
     return this.truck.getAllTrucks(userId);
+  }
+
+  @Get(':id')
+  @ApiResponse({ status: 200, description: 'Get truck by ID' })
+  getTruckById(@GetUser('id') userId: string, @Param('id') truckId: string) {
+    return this.truck.getTrucksById(userId, truckId);
   }
 }
