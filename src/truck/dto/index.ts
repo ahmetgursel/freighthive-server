@@ -1,1 +1,1 @@
-export * from './truck.dto';
+export * from './createTruck.dto';
