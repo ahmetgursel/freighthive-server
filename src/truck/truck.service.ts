@@ -30,4 +30,20 @@ export class TruckService {
       throw error;
     }
   }
+
+  async getAllTrucks(userId: string) {
+    const trucks = await this.prisma.truck.findMany({
+      where: {
+        createdById: userId,
+      },
+    });
+
+    // TODO: check findMany return array or null
+
+    if (!trucks) {
+      throw new Error('Failed to retrieve trucks.');
+    }
+
+    return trucks;
+  }
 }
