@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
@@ -7,7 +7,7 @@ import {
 } from '@nestjs/swagger';
 import { GetUser } from 'src/auth/decorator';
 import { JwtGuard } from 'src/auth/guard';
-import { CreateTruckDto } from './dto';
+import { CreateTruckDto, UpdateTruckDto } from './dto';
 import { TruckService } from './truck.service';
 
 @ApiTags('Trucks')
@@ -31,11 +31,5 @@ export class TruckController {
   @ApiResponse({ status: 200, description: 'Get all trucks' })
   getAllTrucks(@GetUser('id') userId: string) {
     return this.truck.getAllTrucks(userId);
-  }
-
-  @ApiResponse({ status: 200, description: 'Get truck by ID' })
-  @Get(':id')
-  getTrucksById(@GetUser('id') userId: string, @Param('id') truckId: string) {
-    return this.truck.getTrucksById(userId, truckId);
   }
 }
