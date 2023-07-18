@@ -46,4 +46,18 @@ export class TruckService {
 
     return trucks;
   }
+
+  async getTrucksById(userId: string, truckId: string) {
+    const truck = await this.prisma.truck.findFirst({
+      where: {
+        createdById: userId,
+        id: truckId,
+      },
+    });
+
+    if (!truck) {
+      throw new Error('Truck not found.');
+    }
+    return truck;
+  }
 }
