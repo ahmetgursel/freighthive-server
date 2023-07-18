@@ -1,7 +1,7 @@
 import { TruckStatus } from '@prisma/client';
 import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
-export class GetAllTruckDto {
+export class CreateTruckDto {
   @IsString()
   @IsNotEmpty()
   plateNumber: string;
