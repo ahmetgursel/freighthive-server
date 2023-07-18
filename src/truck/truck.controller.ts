@@ -51,6 +51,7 @@ export class TruckController {
   }
 
   @Patch(':id')
+  @ApiResponse({ status: 200, description: 'Updated truck by ID' })
   updateTruckById(
     @GetUser('id') userId: string,
     @Param('id') truckId: string,
