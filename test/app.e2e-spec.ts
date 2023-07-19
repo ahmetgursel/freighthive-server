@@ -1,5 +1,6 @@
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
+import { todo } from 'node:test';
 import * as pactum from 'pactum';
 import { AppModule } from 'src/app.module';
 import { SigninDto, SignupDto } from 'src/auth/dto';
@@ -168,6 +169,12 @@ describe('App e2e', () => {
           .withHeaders({ Authorization: 'Bearer $S{userAt}' })
           .expectStatus(200);
       });
+    });
+  });
+
+  describe('Truck', () => {
+    it('should pass the temporary test', () => {
+      expect(1 + 1).toEqual(2);
     });
   });
 });
