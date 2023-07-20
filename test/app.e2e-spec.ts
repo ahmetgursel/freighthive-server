@@ -1,10 +1,10 @@
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
-import { todo } from 'node:test';
 import * as pactum from 'pactum';
 import { AppModule } from 'src/app.module';
 import { SigninDto, SignupDto } from 'src/auth/dto';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { CreateTruckDto } from 'src/truck/dto';
 
 describe('App e2e', () => {
   let app: INestApplication;
@@ -173,6 +173,14 @@ describe('App e2e', () => {
   });
 
   describe('Truck', () => {
+    const dto: CreateTruckDto = {
+      plateNumber: '15EZ725',
+      driverName: 'Ahmet Gürsel',
+      driverPhone: '05321234567',
+      capacity: 22.5,
+      status: 'LOADED',
+    };
+
     it('should pass the temporary test', () => {
       expect(1 + 1).toEqual(2);
     });
