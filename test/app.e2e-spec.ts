@@ -298,6 +298,14 @@ describe('App e2e', () => {
     });
 
     describe('Get Trucks by Id', () => {
+      it('Should throw exception if there is no truck by id', () => {
+        return pactum
+          .spec()
+          .get('/trucks/7')
+          .withHeaders({ Authorization: 'Bearer $S{userAt}' })
+          .expectStatus(403);
+      });
+
       it('Should get a all trucks', () => {
         return pactum
           .spec()
