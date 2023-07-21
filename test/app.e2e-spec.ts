@@ -173,16 +173,96 @@ describe('App e2e', () => {
   });
 
   describe('Truck', () => {
-    const dto: CreateTruckDto = {
-      plateNumber: '15EZ725',
-      driverName: 'Ahmet Gürsel',
-      driverPhone: '05321234567',
-      capacity: 22.5,
-      status: 'LOADED',
-    };
+    describe('Create Truck', () => {
+      const dto: CreateTruckDto = {
+        plateNumber: '15EZ725',
+        driverName: 'Ahmet Gürsel',
+        driverPhone: '05321234567',
+        capacity: 22.5,
+        status: 'LOADED',
+      };
 
-    it('should pass the temporary test', () => {
-      expect(1 + 1).toEqual(2);
+      it('Should throw exception if plate number empty', () => {
+        return pactum
+          .spec()
+          .post('/trucks')
+          .withHeaders({ Authorization: 'Bearer $S{userAt}' })
+          .withBody({
+            driverName: dto.driverName,
+            driverPhone: dto.driverPhone,
+            capacity: dto.capacity,
+            status: dto.status,
+          })
+          .expectStatus(400);
+      });
+
+      it('Should throw exception if driver name empty', () => {
+        return pactum
+          .spec()
+          .post('/trucks')
+          .withHeaders({ Authorization: 'Bearer $S{userAt}' })
+          .withBody({
+            plateNumber: dto.plateNumber,
+            driverPhone: dto.driverPhone,
+            capacity: dto.capacity,
+            status: dto.status,
+          })
+          .expectStatus(400);
+      });
+
+      it('Should throw exception if driver phone empty', () => {
+        return pactum
+          .spec()
+          .post('/trucks')
+          .withHeaders({ Authorization: 'Bearer $S{userAt}' })
+          .withBody({
+            plateNumber: dto.plateNumber,
+            driverName: dto.driverName,
+            capacity: dto.capacity,
+            status: dto.status,
+          })
+          .expectStatus(400);
+      });
+
+      it('Should throw exception if capacity empty', () => {
+        return pactum
+          .spec()
+          .post('/trucks')
+          .withHeaders({ Authorization: 'Bearer $S{userAt}' })
+          .withBody({
+            plateNumber: dto.plateNumber,
+            driverName: dto.driverName,
+            driverPhone: dto.driverPhone,
+            status: dto.status,
+          })
+          .expectStatus(400);
+      });
+
+      it('Should throw exception if status empty', () => {
+        return pactum
+          .spec()
+          .post('/trucks')
+          .withHeaders({ Authorization: 'Bearer $S{userAt}' })
+          .withBody({
+            plateNumber: dto.plateNumber,
+            driverName: dto.driverName,
+            driverPhone: dto.driverPhone,
+            capacity: dto.capacity,
+          })
+          .expectStatus(400);
+      });
+
+      it('Should throw exception if no body provided', () => {
+        return pactum
+          .spec()
+          .post('/trucks')
+          .withHeaders({ Authorization: 'Bearer $S{userAt}' })
+          .expectStatus(400);
+      });
+
+      it('Should throw exception if no auth provided', () => {
+        return pactum.spec().post('/trucks').expectStatus(401);
+      });
     });
   });
 });
