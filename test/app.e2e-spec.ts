@@ -4,7 +4,7 @@ import * as pactum from 'pactum';
 import { AppModule } from 'src/app.module';
 import { SigninDto, SignupDto } from 'src/auth/dto';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { CreateTruckDto } from 'src/truck/dto';
+import { CreateTruckDto, UpdateTruckDto } from 'src/truck/dto';
 
 describe('App e2e', () => {
   let app: INestApplication;
@@ -312,6 +312,116 @@ describe('App e2e', () => {
           .get('/trucks/$S{truckId}')
           .withHeaders({ Authorization: 'Bearer $S{userAt}' })
           .expectStatus(200);
+      });
+    });
+
+    describe('Update Trucks', () => {
+      const dto: UpdateTruckDto = {
+        plateNumber: '07VB606',
+        driverName: 'Mustafa Gürsel',
+        driverPhone: '05321234554',
+        capacity: 12.5,
+        status: 'UNLOADED',
+      };
+
+      it('Should throw exception if plate number empty', () => {
+        return pactum
+          .spec()
+          .patch('/trucks/$S{truckId}')
+          .withHeaders({ Authorization: 'Bearer $S{userAt}' })
+          .withBody({
+            driverName: dto.driverName,
+            driverPhone: dto.driverPhone,
+            capacity: dto.capacity,
+            status: dto.status,
+          })
+          .expectStatus(400);
+      });
+
+      it('Should throw exception if driver name empty', () => {
+        return pactum
+          .spec()
+          .patch('/trucks/$S{truckId}')
+          .withHeaders({ Authorization: 'Bearer $S{userAt}' })
+          .withBody({
+            plateNumber: dto.plateNumber,
+            driverPhone: dto.driverPhone,
+            capacity: dto.capacity,
+            status: dto.status,
+          })
+          .expectStatus(400);
+      });
+
+      it('Should throw exception if driver phone empty', () => {
+        return pactum
+          .spec()
+          .patch('/trucks/$S{truckId}')
+          .withHeaders({ Authorization: 'Bearer $S{userAt}' })
+          .withBody({
+            plateNumber: dto.plateNumber,
+            driverName: dto.driverName,
+            capacity: dto.capacity,
+            status: dto.status,
+          })
+          .expectStatus(400);
+      });
+
+      it('Should throw exception if capacity empty', () => {
+        return pactum
+          .spec()
+          .patch('/trucks/$S{truckId}')
+          .withHeaders({ Authorization: 'Bearer $S{userAt}' })
+          .withBody({
+            plateNumber: dto.plateNumber,
+            driverName: dto.driverName,
+            driverPhone: dto.driverPhone,
+            status: dto.status,
+          })
+          .expectStatus(400);
+      });
+
+      it('Should throw exception if status empty', () => {
+        return pactum
+          .spec()
+          .patch('/trucks/$S{truckId}')
+          .withHeaders({ Authorization: 'Bearer $S{userAt}' })
+          .withBody({
+            plateNumber: dto.plateNumber,
+            driverName: dto.driverName,
+            driverPhone: dto.driverPhone,
+            capacity: dto.capacity,
+          })
+          .expectStatus(400);
+      });
+
+      it('Should throw exception if no body provided', () => {
+        return pactum
+          .spec()
+          .patch('/trucks/$S{truckId}')
+          .withHeaders({ Authorization: 'Bearer $S{userAt}' })
+          .expectStatus(400);
+      });
+
+      it('Should throw exception if no auth provided', () => {
+        return pactum.spec().patch('/trucks/$S{truckId}').expectStatus(401);
+      });
+
+      it('Should update a trucks by id', () => {
+        return pactum
+          .spec()
+          .patch('/trucks/$S{truckId}')
+          .withHeaders({ Authorization: 'Bearer $S{userAt}' })
+          .withBody(dto)
+          .expectStatus(200);
+      });
+
+      it('Should throw exception if there is no truck by id', () => {
+        return pactum
+          .spec()
+          .patch('/trucks/7')
+          .withHeaders({ Authorization: 'Bearer $S{userAt}' })
+          .withBody(dto)
+          .expectStatus(403);
       });
     });
   });
