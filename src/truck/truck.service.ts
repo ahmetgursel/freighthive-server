@@ -56,7 +56,7 @@ export class TruckService {
     });
 
     if (!truck) {
-      throw new Error('Truck not found.');
+      throw new ForbiddenException('Truck not found.');
     }
     return truck;
   }
