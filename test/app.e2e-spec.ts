@@ -29,11 +29,10 @@ describe('App e2e', () => {
     pactum.request.setBaseUrl('http://localhost:3333');
   });
 
-  afterAll(() => {
+  afterAll(async () => {
     app.close();
   });
 
-  //TODO: split test into different files
   describe('Auth', () => {
     describe('Signup', () => {
       const dto: SignupDto = {
@@ -262,6 +261,38 @@ describe('App e2e', () => {
 
       it('Should throw exception if no auth provided', () => {
         return pactum.spec().post('/trucks').expectStatus(401);
+      });
+
+      it('Should create a new trucks', () => {
+        return pactum
+          .spec()
+          .post('/trucks')
+          .withHeaders({ Authorization: 'Bearer $S{userAt}' })
+          .withBody(dto)
+          .expectStatus(201);
+      });
+
+      it('Should throw exception if plate number exist', () => {
+        return pactum
+          .spec()
+          .post('/trucks')
+          .withHeaders({ Authorization: 'Bearer $S{userAt}' })
+          .withBody(dto)
+          .expectStatus(403);
+      });
+    });
+
+    describe('Get Trucks', () => {
+      it('Should throw exception if no auth provided', () => {
+        return pactum.spec().get('/trucks').expectStatus(401);
+      });
+
+      it('Should get a all trucks', () => {
+        return pactum
+          .spec()
+          .get('/trucks')
+          .withHeaders({ Authorization: 'Bearer $S{userAt}' })
+          .expectStatus(200);
       });
     });
   });
