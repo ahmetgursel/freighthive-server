@@ -7,6 +7,9 @@ import { UserModule } from './user/user.module';
 import { TruckController } from './truck/truck.controller';
 import { TruckService } from './truck/truck.service';
 import { TruckModule } from './truck/truck.module';
+import { OrganizationController } from './organization/organization.controller';
+import { OrganizationService } from './organization/organization.service';
+import { OrganizationModule } from './organization/organization.module';
 
 @Module({
   imports: [
@@ -18,8 +21,9 @@ import { TruckModule } from './truck/truck.module';
     PrismaModule,
     HealtcheckModule,
     TruckModule,
+    OrganizationModule,
   ],
-  controllers: [TruckController],
-  providers: [TruckService],
+  controllers: [TruckController, OrganizationController],
+  providers: [TruckService, OrganizationService],
 })
 export class AppModule {}
