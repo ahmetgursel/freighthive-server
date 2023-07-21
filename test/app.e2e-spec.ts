@@ -424,5 +424,27 @@ describe('App e2e', () => {
           .expectStatus(403);
       });
     });
+
+    describe('Delete Trucks', () => {
+      it('Should throw exception if there is no truck by id', () => {
+        return pactum
+          .spec()
+          .delete('/trucks/7')
+          .withHeaders({ Authorization: 'Bearer $S{userAt}' })
+          .expectStatus(500);
+      });
+
+      it('Should throw exception if no auth provided', () => {
+        return pactum.spec().patch('/trucks/$S{truckId}').expectStatus(401);
+      });
+
+      it('Should delete a trucks by id', () => {
+        return pactum
+          .spec()
+          .delete('/trucks/$S{truckId}')
+          .withHeaders({ Authorization: 'Bearer $S{userAt}' })
+          .expectStatus(200);
+      });
+    });
   });
 });
