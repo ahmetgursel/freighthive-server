@@ -269,7 +269,8 @@ describe('App e2e', () => {
           .post('/trucks')
           .withHeaders({ Authorization: 'Bearer $S{userAt}' })
           .withBody(dto)
-          .expectStatus(201);
+          .expectStatus(201)
+          .stores('truckId', 'id');
       });
 
       it('Should throw exception if plate number exist', () => {
@@ -291,6 +292,16 @@ describe('App e2e', () => {
         return pactum
           .spec()
           .get('/trucks')
+          .withHeaders({ Authorization: 'Bearer $S{userAt}' })
+          .expectStatus(200);
+      });
+    });
+
+    describe('Get Trucks by Id', () => {
+      it('Should get a all trucks', () => {
+        return pactum
+          .spec()
+          .get('/trucks/$S{truckId}')
           .withHeaders({ Authorization: 'Bearer $S{userAt}' })
           .expectStatus(200);
       });
