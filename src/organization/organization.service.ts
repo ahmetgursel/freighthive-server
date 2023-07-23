@@ -1,7 +1,7 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { CreateOrganizationDto } from './dto';
+import { CreateOrganizationDto, UpdateOrganizationDto } from './dto';
 
 @Injectable()
 export class OrganizationService {
@@ -68,6 +68,35 @@ export class OrganizationService {
       return organization;
     } catch (error) {
       throw new ForbiddenException('Failed to retrieve organization.');
+    }
+  }
+
+  async updateOrganizationById(
+    userId: string,
+    organizationId: string,
+    dto: UpdateOrganizationDto,
+  ) {
+    try {
+      const organization = await this.prisma.organization.findUnique({
+        where: {
+          id: organizationId,
+        },
+      });
+
+      if (!organization || organization.createdById !== userId) {
+        throw new ForbiddenException('Access to resources denied.');
+      }
+
+      const updatedOrganization = await this.prisma.organization.update({
+        where: { id: organizationId },
+        data: {
+          ...dto,
+        },
+      });
+
+      return updatedOrganization;
+    } catch (error) {
+      throw new ForbiddenException('Failed to update organization.');
     }
   }
 }

@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Patch,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
@@ -7,7 +15,7 @@ import {
 } from '@nestjs/swagger';
 import { GetUser } from 'src/auth/decorator';
 import { JwtGuard } from 'src/auth/guard';
-import { CreateOrganizationDto } from './dto';
+import { CreateOrganizationDto, UpdateOrganizationDto } from './dto';
 import { OrganizationService } from './organization.service';
 
 @ApiTags('Organizations')
@@ -43,5 +51,19 @@ export class OrganizationController {
     @Param('id') organizationId: string,
   ) {
     return this.organization.getOrganizationById(userId, organizationId);
+  }
+
+  @Patch(':id')
+  @ApiResponse({ status: 200, description: 'Updated organization by ID' })
+  updateOrganizationById(
+    @Body() dto: UpdateOrganizationDto,
+    @GetUser('id') userId: string,
+    @Param('id') organizationId: string,
+  ) {
+    return this.organization.updateOrganizationById(
+      userId,
+      organizationId,
+      dto,
+    );
   }
 }
