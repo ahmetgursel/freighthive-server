@@ -51,4 +51,23 @@ export class OrganizationService {
       throw new ForbiddenException('Failed to retrieve organizations.');
     }
   }
+
+  async getOrganizationById(userId: string, organizationId: string) {
+    try {
+      const organization = await this.prisma.organization.findFirst({
+        where: {
+          createdById: userId,
+          id: organizationId,
+        },
+      });
+
+      if (!organization) {
+        throw new ForbiddenException('Organization not found.');
+      }
+
+      return organization;
+    } catch (error) {
+      throw new ForbiddenException('Failed to retrieve organization.');
+    }
+  }
 }
