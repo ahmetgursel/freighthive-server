@@ -99,4 +99,28 @@ export class OrganizationService {
       throw new ForbiddenException('Failed to update organization.');
     }
   }
+
+  async deleteOrganizationById(userId: string, organizationId: string) {
+    try {
+      const organization = await this.prisma.organization.findUnique({
+        where: {
+          id: organizationId,
+        },
+      });
+
+      if (!organization || organization.createdById !== userId) {
+        throw new ForbiddenException('Access to resources denied.');
+      }
+
+      await this.prisma.organization.delete({
+        where: {
+          id: organizationId,
+        },
+      });
+
+      return { message: 'Organization deleted successfully.' };
+    } catch (error) {
+      throw new ForbiddenException('Failed to delete organization.');
+    }
+  }
 }

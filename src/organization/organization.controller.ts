@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Patch,
@@ -65,5 +66,14 @@ export class OrganizationController {
       organizationId,
       dto,
     );
+  }
+
+  @Delete(':id')
+  @ApiResponse({ status: 200, description: 'Deleted organization by ID' })
+  deleteOrganizationById(
+    @GetUser('id') userId: string,
+    @Param('id') organizationId: string,
+  ) {
+    return this.organization.deleteOrganizationById(userId, organizationId);
   }
 }
