@@ -30,4 +30,25 @@ export class OrganizationService {
       throw error;
     }
   }
+
+  async getAllOrganizations(userId: string) {
+    try {
+      const organizations = await this.prisma.organization.findMany({
+        where: {
+          createdById: userId,
+        },
+      });
+
+      // Eğer organizasyonlar boşsa, hata fırlat
+      if (organizations.length === 0) {
+        throw new ForbiddenException(
+          'No organizations found for the given user.',
+        );
+      }
+
+      return organizations;
+    } catch (error) {
+      throw new ForbiddenException('Failed to retrieve organizations.');
+    }
+  }
 }

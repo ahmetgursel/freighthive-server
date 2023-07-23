@@ -1,4 +1,4 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
@@ -28,5 +28,11 @@ export class OrganizationController {
     @GetUser('id') userId: string,
   ) {
     return this.organization.createNewOrganization(dto, userId);
+  }
+
+  @Get()
+  @ApiResponse({ status: 200, description: 'Get all organizations' })
+  getAllOrganizations(@GetUser('id') userId: string) {
+    return this.organization.getAllOrganizations(userId);
   }
 }
