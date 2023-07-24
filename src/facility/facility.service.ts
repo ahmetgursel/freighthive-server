@@ -7,7 +7,7 @@ import { CreateFacilityDto } from './dto';
 export class FacilityService {
   constructor(private prisma: PrismaService) {}
 
-  createNewFacility(dto: CreateFacilityDto, userId: string) {
+  async createNewFacility(dto: CreateFacilityDto, userId: string) {
     try {
       const facility = this.prisma.facility.create({
         data: {
@@ -27,6 +27,24 @@ export class FacilityService {
         }
       }
       throw error;
+    }
+  }
+
+  async getAllFacilities(userId: string) {
+    try {
+      const facilities = await this.prisma.facility.findMany({
+        where: {
+          createdById: userId,
+        },
+      });
+
+      if (facilities.length === 0) {
+        throw new ForbiddenException('No facilities found for the given user.');
+      }
+
+      return facilities;
+    } catch (error) {
+      throw new ForbiddenException('Failed to retrieve facilities.');
     }
   }
 }
