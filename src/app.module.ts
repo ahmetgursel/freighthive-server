@@ -13,6 +13,7 @@ import { OrganizationModule } from './organization/organization.module';
 import { FacilityController } from './facility/facility.controller';
 import { FacilityService } from './facility/facility.service';
 import { FacilityModule } from './facility/facility.module';
+import { TicketModule } from './ticket/ticket.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { FacilityModule } from './facility/facility.module';
     TruckModule,
     OrganizationModule,
     FacilityModule,
+    TicketModule,
   ],
   controllers: [TruckController, OrganizationController, FacilityController],
   providers: [TruckService, OrganizationService, FacilityService],
