@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Patch,
@@ -61,5 +62,14 @@ export class FacilityController {
     @Param('id') facilityId: string,
   ) {
     return this.facility.updateFacilityById(dto, userId, facilityId);
+  }
+
+  @Delete(':id')
+  @ApiResponse({ status: 200, description: 'Deleted facility by ID' })
+  deleteFacilityById(
+    @GetUser('id') userId: string,
+    @Param('id') facilityId: string,
+  ) {
+    return this.facility.deleteFacilityById(userId, facilityId);
   }
 }

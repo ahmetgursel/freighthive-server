@@ -97,4 +97,26 @@ export class FacilityService {
       throw new ForbiddenException('Failed to update facility.');
     }
   }
+
+  async deleteFacilityById(userId: string, facilityId: string) {
+    try {
+      const facility = await this.prisma.facility.findUnique({
+        where: { id: facilityId },
+      });
+
+      if (!facility || facility.createdById !== userId) {
+        throw new ForbiddenException('Access to resources denied.');
+      }
+
+      await this.prisma.facility.delete({
+        where: {
+          id: facilityId,
+        },
+      });
+
+      return { message: 'Facility deleted successfully.' };
+    } catch (error) {
+      throw new ForbiddenException('Failed to delete facility.');
+    }
+  }
 }
