@@ -18,7 +18,8 @@ model User {
   name          String
   role          UserRole
   trucks        Truck[]    
-  organizations Organization[]     
+  organizations Organization[]    
+  facilities    Facility[] 
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @updatedAt
 
@@ -45,6 +46,18 @@ model Organization {
   taxNumber       String       @unique
   taxOffice       String
   invoiceAddress  String
+  createdBy       User         @relation(fields: [createdById], references: [id], onDelete: Cascade)
+  createdById     String
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+}
+
+model Facility {
+  id              String       @id @default(uuid())
+  name            String       @unique
+  address         String
+  city            String
+  country         String
   createdBy       User         @relation(fields: [createdById], references: [id], onDelete: Cascade)
   createdById     String
   createdAt       DateTime     @default(now())

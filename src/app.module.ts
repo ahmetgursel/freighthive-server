@@ -10,6 +10,9 @@ import { TruckModule } from './truck/truck.module';
 import { OrganizationController } from './organization/organization.controller';
 import { OrganizationService } from './organization/organization.service';
 import { OrganizationModule } from './organization/organization.module';
+import { FacilityController } from './facility/facility.controller';
+import { FacilityService } from './facility/facility.service';
+import { FacilityModule } from './facility/facility.module';
 
 @Module({
   imports: [
@@ -22,8 +25,9 @@ import { OrganizationModule } from './organization/organization.module';
     HealtcheckModule,
     TruckModule,
     OrganizationModule,
+    FacilityModule,
   ],
-  controllers: [TruckController, OrganizationController],
-  providers: [TruckService, OrganizationService],
+  controllers: [TruckController, OrganizationController, FacilityController],
+  providers: [TruckService, OrganizationService, FacilityService],
 })
 export class AppModule {}

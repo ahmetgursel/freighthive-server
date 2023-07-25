@@ -7,7 +7,7 @@ import { CreateOrganizationDto, UpdateOrganizationDto } from './dto';
 export class OrganizationService {
   constructor(private prisma: PrismaService) {}
 
-  createNewOrganization(dto: CreateOrganizationDto, userId: string) {
+  async createNewOrganization(dto: CreateOrganizationDto, userId: string) {
     try {
       const organization = this.prisma.organization.create({
         data: {
