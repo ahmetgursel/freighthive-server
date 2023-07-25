@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Patch,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
@@ -7,7 +15,7 @@ import {
 } from '@nestjs/swagger';
 import { GetUser } from 'src/auth/decorator';
 import { JwtGuard } from 'src/auth/guard';
-import { CreateFacilityDto } from './dto';
+import { CreateFacilityDto, UpdateFacilityDto } from './dto';
 import { FacilityService } from './facility.service';
 
 @ApiTags('Facility')
@@ -43,5 +51,15 @@ export class FacilityController {
     @Param('id') facilityId: string,
   ) {
     return this.facility.getFacilityById(userId, facilityId);
+  }
+
+  @Patch(':id')
+  @ApiResponse({ status: 200, description: 'Updated facility by ID' })
+  updateFacilityById(
+    @Body() dto: UpdateFacilityDto,
+    @GetUser('id') userId: string,
+    @Param('id') facilityId: string,
+  ) {
+    return this.facility.updateFacilityById(dto, userId, facilityId);
   }
 }

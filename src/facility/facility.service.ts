@@ -1,7 +1,7 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { CreateFacilityDto } from './dto';
+import { CreateFacilityDto, UpdateFacilityDto } from './dto';
 
 @Injectable()
 export class FacilityService {
@@ -64,6 +64,37 @@ export class FacilityService {
       return facility;
     } catch (error) {
       throw new ForbiddenException('Failed to retrieve facility.');
+    }
+  }
+
+  async updateFacilityById(
+    dto: UpdateFacilityDto,
+    userId: string,
+    facilityId: string,
+  ) {
+    try {
+      const facility = await this.prisma.facility.findUnique({
+        where: {
+          id: facilityId,
+        },
+      });
+
+      if (!facility || facility.createdById !== userId) {
+        throw new ForbiddenException('Access to resources denied.');
+      }
+
+      const updatedFacility = await this.prisma.facility.update({
+        where: {
+          id: facilityId,
+        },
+        data: {
+          ...dto,
+        },
+      });
+
+      return updatedFacility;
+    } catch (error) {
+      throw new ForbiddenException('Failed to update facility.');
     }
   }
 }
