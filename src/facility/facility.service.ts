@@ -47,4 +47,23 @@ export class FacilityService {
       throw new ForbiddenException('Failed to retrieve facilities.');
     }
   }
+
+  async getFacilityById(userId: string, facilityId: string) {
+    try {
+      const facility = await this.prisma.facility.findFirst({
+        where: {
+          createdById: userId,
+          id: facilityId,
+        },
+      });
+
+      if (!facility) {
+        throw new ForbiddenException('Facility not found');
+      }
+
+      return facility;
+    } catch (error) {
+      throw new ForbiddenException('Failed to retrieve facility.');
+    }
+  }
 }
