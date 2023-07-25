@@ -19,7 +19,8 @@ model User {
   role          UserRole
   trucks        Truck[]    
   organizations Organization[]    
-  facilities    Facility[] 
+  facilities    Facility[]
+  tickets       Ticket[] 
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @updatedAt
 
@@ -33,6 +34,7 @@ model Truck {
   driverPhone  String
   capacity     Decimal
   status       TruckStatus
+  tickets      Ticket[]
   createdBy    User         @relation(fields: [createdById], references: [id], onDelete: Cascade)
   createdById  String
   createdAt    DateTime     @default(now())
@@ -46,6 +48,7 @@ model Organization {
   taxNumber       String       @unique
   taxOffice       String
   invoiceAddress  String
+  tickets         Ticket[]
   createdBy       User         @relation(fields: [createdById], references: [id], onDelete: Cascade)
   createdById     String
   createdAt       DateTime     @default(now())
@@ -58,10 +61,29 @@ model Facility {
   address         String
   city            String
   country         String
+  tickets         Ticket[]
   createdBy       User         @relation(fields: [createdById], references: [id], onDelete: Cascade)
   createdById     String
   createdAt       DateTime     @default(now())
   updatedAt       DateTime     @updatedAt
+}
+
+model Ticket {
+  id                String       @id @default(uuid())
+  containerNumber   String       @unique
+  entryTime         DateTime
+  exitTime          DateTime
+  createdBy         User         @relation(fields: [createdById], references: [id], onDelete: Cascade)
+  createdById       String
+  truck             Truck        @relation(fields: [truckId], references: [id], onDelete: Cascade)
+  truckId           String
+  organization      Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  organizationId    String
+  facility          Facility     @relation(fields: [facilityId], references: [id], onDelete: Cascade)
+  facilityId        String
+  isInvoiceCreated  Boolean      @default(false)
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
 }
 
 enum UserRole {
