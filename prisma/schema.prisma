@@ -70,13 +70,13 @@ model Facility {
 
 model Ticket {
   id                String       @id @default(uuid())
-  containerNumber   String       @unique
-  entryTime         DateTime
-  exitTime          DateTime
+  containerNumber   String?      @unique
+  entryTime         DateTime?
+  exitTime          DateTime?
   createdBy         User         @relation(fields: [createdById], references: [id], onDelete: Cascade)
   createdById       String
-  truck             Truck        @relation(fields: [truckId], references: [id], onDelete: Cascade)
-  truckId           String
+  truck             Truck?        @relation(fields: [truckId], references: [id], onDelete: Cascade)
+  truckId           String?
   organization      Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   organizationId    String
   facility          Facility     @relation(fields: [facilityId], references: [id], onDelete: Cascade)
