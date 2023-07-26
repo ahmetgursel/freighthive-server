@@ -4,36 +4,36 @@ import { IsBoolean, IsDate, IsOptional, IsString } from 'class-validator';
 export class UpdateTicketDto {
   @IsString()
   @IsOptional()
-  @ApiProperty()
+  @ApiProperty({ required: false })
   containerNumber?: string;
 
   @IsDate()
   @IsOptional()
-  @ApiProperty()
+  @ApiProperty({ required: false })
   entryTime?: Date;
 
   @IsDate()
   @IsOptional()
-  @ApiProperty()
+  @ApiProperty({ required: false })
   exitTime?: Date;
 
   @IsString()
   @IsOptional()
-  @ApiProperty()
+  @ApiProperty({ required: false })
   truckId?: string;
 
   @IsString()
   @IsOptional()
-  @ApiProperty()
+  @ApiProperty({ required: false })
   organizationId?: string;
 
   @IsString()
   @IsOptional()
-  @ApiProperty()
+  @ApiProperty({ required: false })
   facilityId?: string;
 
   @IsBoolean()
   @IsOptional()
-  @ApiProperty()
+  @ApiProperty({ required: false })
   isInvoiceCreated?: boolean;
 }
