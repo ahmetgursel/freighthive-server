@@ -2,6 +2,7 @@ import { ForbiddenException, Injectable } from '@nestjs/common';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateTicketDto } from './dto';
+import { UpdateTicketDto } from './dto/updateTicket.dto';
 
 @Injectable()
 export class TicketService {
@@ -67,6 +68,35 @@ export class TicketService {
       return ticket;
     } catch (error) {
       throw new ForbiddenException('Failed to retrieve ticket.');
+    }
+  }
+
+  async updateTicketById(
+    userId: string,
+    ticketId: string,
+    dto: UpdateTicketDto,
+  ) {
+    try {
+      const ticket = await this.prisma.ticket.findUnique({
+        where: {
+          id: ticketId,
+        },
+      });
+
+      if (!ticket || ticket.createdById !== userId) {
+        throw new ForbiddenException('Ticket not found.');
+      }
+
+      const updatedTicket = await this.prisma.ticket.update({
+        where: { id: ticketId },
+        data: {
+          ...dto,
+        },
+      });
+
+      return updatedTicket;
+    } catch (error) {
+      throw new ForbiddenException('Failed to update ticket.');
     }
   }
 }

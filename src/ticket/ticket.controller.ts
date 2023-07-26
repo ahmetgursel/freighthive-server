@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
@@ -8,6 +17,7 @@ import {
 import { GetUser } from 'src/auth/decorator';
 import { JwtGuard } from 'src/auth/guard';
 import { CreateTicketDto } from './dto';
+import { UpdateTicketDto } from './dto/updateTicket.dto';
 import { TicketService } from './ticket.service';
 
 @ApiTags('Tickets')
@@ -37,5 +47,15 @@ export class TicketController {
   @ApiResponse({ status: 200, description: 'Get ticket by ID' })
   getTicketById(@GetUser('id') userId: string, @Param('id') ticketId: string) {
     return this.ticket.getTicketById(userId, ticketId);
+  }
+
+  @Patch(':id')
+  @ApiResponse({ status: 200, description: 'Updated ticket by ID' })
+  updateTicketById(
+    @GetUser('id') userId: string,
+    @Param('id') ticketId: string,
+    @Body() dto: UpdateTicketDto,
+  ) {
+    return this.ticket.updateTicketById(userId, ticketId, dto);
   }
 }
