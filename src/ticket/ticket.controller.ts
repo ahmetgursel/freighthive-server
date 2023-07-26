@@ -58,4 +58,13 @@ export class TicketController {
   ) {
     return this.ticket.updateTicketById(userId, ticketId, dto);
   }
+
+  @Delete(':id')
+  @ApiResponse({ status: 200, description: 'Deleted ticket by ID' })
+  deleteTicketById(
+    @GetUser('id') userId: string,
+    @Param('id') ticketId: string,
+  ) {
+    return this.ticket.deleteTicketById(userId, ticketId);
+  }
 }

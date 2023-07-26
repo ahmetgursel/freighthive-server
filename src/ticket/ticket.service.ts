@@ -99,4 +99,28 @@ export class TicketService {
       throw new ForbiddenException('Failed to update ticket.');
     }
   }
+
+  async deleteTicketById(userId: string, ticketId: string) {
+    try {
+      const ticket = await this.prisma.ticket.findUnique({
+        where: {
+          id: ticketId,
+        },
+      });
+
+      if (!ticket || ticket.createdById !== userId) {
+        throw new ForbiddenException('Ticket not found.');
+      }
+
+      await this.prisma.ticket.delete({
+        where: {
+          id: ticketId,
+        },
+      });
+
+      return { message: 'Ticket deleted successfully.' };
+    } catch (error) {
+      throw new ForbiddenException('Failed to delete ticket.');
+    }
+  }
 }
