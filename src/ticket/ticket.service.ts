@@ -32,4 +32,22 @@ export class TicketService {
       throw error;
     }
   }
+
+  async getAllTickets(userId: string) {
+    try {
+      const tickets = await this.prisma.ticket.findMany({
+        where: {
+          createdById: userId,
+        },
+      });
+
+      if (tickets.length === 0) {
+        throw new ForbiddenException('No tickets found for the given user.');
+      }
+
+      return tickets;
+    } catch (error) {
+      throw new ForbiddenException('Failed to retrieve tickets.');
+    }
+  }
 }
