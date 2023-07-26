@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
@@ -31,5 +31,11 @@ export class TicketController {
   @ApiResponse({ status: 200, description: 'Get all tickets.' })
   getAllTickets(@GetUser('id') userId: string) {
     return this.ticket.getAllTickets(userId);
+  }
+
+  @Get(':id')
+  @ApiResponse({ status: 200, description: 'Get ticket by ID' })
+  getTicketById(@GetUser('id') userId: string, @Param('id') ticketId: string) {
+    return this.ticket.getTicketById(userId, ticketId);
   }
 }

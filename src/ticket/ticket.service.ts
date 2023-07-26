@@ -50,4 +50,23 @@ export class TicketService {
       throw new ForbiddenException('Failed to retrieve tickets.');
     }
   }
+
+  async getTicketById(userId: string, ticketId: string) {
+    try {
+      const ticket = await this.prisma.ticket.findFirst({
+        where: {
+          createdById: userId,
+          id: ticketId,
+        },
+      });
+
+      if (!ticket) {
+        throw new ForbiddenException('Ticket not found.');
+      }
+
+      return ticket;
+    } catch (error) {
+      throw new ForbiddenException('Failed to retrieve ticket.');
+    }
+  }
 }
