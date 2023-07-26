@@ -10,22 +10,22 @@ import {
 export class CreateTicketDto {
   @IsString()
   @IsOptional()
-  @ApiProperty()
+  @ApiProperty({ required: false })
   containerNumber?: string;
 
   @IsDate()
   @IsOptional()
-  @ApiProperty()
+  @ApiProperty({ required: false })
   entryTime?: Date;
 
   @IsDate()
   @IsOptional()
-  @ApiProperty()
+  @ApiProperty({ required: false })
   exitTime?: Date;
 
   @IsString()
   @IsOptional()
-  @ApiProperty()
+  @ApiProperty({ required: false })
   truckId?: string;
 
   @IsString()
