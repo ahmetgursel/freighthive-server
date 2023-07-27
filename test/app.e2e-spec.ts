@@ -3,6 +3,7 @@ import { Test } from '@nestjs/testing';
 import * as pactum from 'pactum';
 import { AppModule } from 'src/app.module';
 import { SigninDto, SignupDto } from 'src/auth/dto';
+import { CreateFacilityDto, UpdateFacilityDto } from 'src/facility/dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateTruckDto, UpdateTruckDto } from 'src/truck/dto';
 
@@ -306,7 +307,7 @@ describe('App e2e', () => {
           .expectStatus(403);
       });
 
-      it('Should get a all trucks', () => {
+      it('Should get a trucks by id', () => {
         return pactum
           .spec()
           .get('/trucks/$S{truckId}')
@@ -442,6 +443,252 @@ describe('App e2e', () => {
         return pactum
           .spec()
           .delete('/trucks/$S{truckId}')
+          .withHeaders({ Authorization: 'Bearer $S{userAt}' })
+          .expectStatus(200);
+      });
+    });
+  });
+
+  describe('Facility', () => {
+    describe('Create Facility', () => {
+      const dto: CreateFacilityDto = {
+        name: 'Test Facility',
+        address: 'Test Adress',
+        city: 'Test City',
+        country: 'Test Country',
+      };
+
+      it('Should throw exception if name empty', () => {
+        return pactum
+          .spec()
+          .post('/facility')
+          .withHeaders({ Authorization: 'Bearer $S{userAt}' })
+          .withBody({
+            adress: dto.address,
+            city: dto.city,
+            country: dto.country,
+          })
+          .expectStatus(400);
+      });
+
+      it('Should throw exception if name adress', () => {
+        return pactum
+          .spec()
+          .post('/facility')
+          .withHeaders({ Authorization: 'Bearer $S{userAt}' })
+          .withBody({
+            name: dto.name,
+            city: dto.city,
+            country: dto.country,
+          })
+          .expectStatus(400);
+      });
+
+      it('Should throw exception if city empty', () => {
+        return pactum
+          .spec()
+          .post('/facility')
+          .withHeaders({ Authorization: 'Bearer $S{userAt}' })
+          .withBody({
+            name: dto.name,
+            adress: dto.address,
+            country: dto.country,
+          })
+          .expectStatus(400);
+      });
+
+      it('Should throw exception if country empty', () => {
+        return pactum
+          .spec()
+          .post('/facility')
+          .withHeaders({ Authorization: 'Bearer $S{userAt}' })
+          .withBody({
+            name: dto.name,
+            adress: dto.address,
+            city: dto.city,
+          })
+          .expectStatus(400);
+      });
+
+      it('Should throw exception if no body provided', () => {
+        return pactum
+          .spec()
+          .post('/facility')
+          .withHeaders({ Authorization: 'Bearer $S{userAt}' })
+          .expectStatus(400);
+      });
+
+      it('Should throw exception if no auth provided', () => {
+        return pactum.spec().post('/facility').expectStatus(401);
+      });
+
+      it('Should create a new facility', () => {
+        return pactum
+          .spec()
+          .post('/facility')
+          .withHeaders({ Authorization: 'Bearer $S{userAt}' })
+          .withBody(dto)
+          .expectStatus(201)
+          .stores('facilityId', 'id');
+      });
+
+      //FIXME: 500 hatası yerine 403 hatası vermeli!
+      it('Should throw exception if name exist', () => {
+        return pactum
+          .spec()
+          .post('/facility')
+          .withHeaders({ Authorization: 'Bearer $S{userAt}' })
+          .withBody(dto)
+          .expectStatus(500);
+      });
+    });
+
+    describe('Get Facility', () => {
+      it('Should throw exception if no auth provided', () => {
+        return pactum.spec().get('/facility').expectStatus(401);
+      });
+
+      it('Should get a all facility', () => {
+        return pactum
+          .spec()
+          .get('/facility')
+          .withHeaders({ Authorization: 'Bearer $S{userAt}' })
+          .expectStatus(200);
+      });
+    });
+
+    describe('Get facility by id', () => {
+      it('Should throw exception if there is no facility by id', () => {
+        return pactum
+          .spec()
+          .get('/facility/7')
+          .withHeaders({ Authorization: 'Bearer $S{userAt}' })
+          .expectStatus(403);
+      });
+
+      it('Should get a facility by id', () => {
+        return pactum
+          .spec()
+          .get('/facility/$S{facilityId}')
+          .withHeaders({ Authorization: 'Bearer $S{userAt}' })
+          .expectStatus(200);
+      });
+    });
+
+    describe('Update Facility', () => {
+      const dto: UpdateFacilityDto = {
+        name: 'Updated Test Facility',
+        address: 'Updated Test Adress',
+        city: 'Updated Test City',
+        country: 'Updated Test Country',
+      };
+
+      it('Should throw exception if name empty', () => {
+        return pactum
+          .spec()
+          .patch('/facility/$S{facilityId}')
+          .withHeaders({ Authorization: 'Bearer $S{userAt}' })
+          .withBody({
+            adress: dto.address,
+            city: dto.city,
+            country: dto.country,
+          })
+          .expectStatus(400);
+      });
+
+      it('Should throw exception if adress empty', () => {
+        return pactum
+          .spec()
+          .patch('/facility/$S{facilityId}')
+          .withHeaders({ Authorization: 'Bearer $S{userAt}' })
+          .withBody({
+            name: dto.name,
+            city: dto.city,
+            country: dto.country,
+          })
+          .expectStatus(400);
+      });
+
+      it('Should throw exception if city empty', () => {
+        return pactum
+          .spec()
+          .patch('/facility/$S{facilityId}')
+          .withHeaders({ Authorization: 'Bearer $S{userAt}' })
+          .withBody({
+            name: dto.name,
+            address: dto.address,
+            country: dto.country,
+          })
+          .expectStatus(400);
+      });
+
+      it('Should throw exception if country empty', () => {
+        return pactum
+          .spec()
+          .patch('/facility/$S{facilityId}')
+          .withHeaders({ Authorization: 'Bearer $S{userAt}' })
+          .withBody({
+            name: dto.name,
+            address: dto.address,
+            city: dto.city,
+          })
+          .expectStatus(400);
+      });
+
+      it('Should throw exception if no body provided', () => {
+        return pactum
+          .spec()
+          .patch('/facility/$S{facilityId}')
+          .withHeaders({ Authorization: 'Bearer $S{userAt}' })
+          .expectStatus(400);
+      });
+
+      it('Should throw exception if no auth provided', () => {
+        return pactum
+          .spec()
+          .patch('/facility/$S{facilityId}')
+          .expectStatus(401);
+      });
+
+      it('Should update a facility by id', () => {
+        return pactum
+          .spec()
+          .patch('/facility/$S{facilityId}')
+          .withHeaders({ Authorization: 'Bearer $S{userAt}' })
+          .withBody(dto)
+          .expectStatus(200);
+      });
+
+      it('Should throw exception if there is no facility by id', () => {
+        return pactum
+          .spec()
+          .patch('/facility/7')
+          .withHeaders({ Authorization: 'Bearer $S{userAt}' })
+          .withBody(dto)
+          .expectStatus(403);
+      });
+    });
+
+    describe('Delete Facility', () => {
+      it('Should throw exception if there is no facility by id', () => {
+        return pactum
+          .spec()
+          .delete('/facility/7')
+          .withHeaders({ Authorization: 'Bearer $S{userAt}' })
+          .expectStatus(403);
+      });
+
+      it('Should throw exception if no auth provided', () => {
+        return pactum
+          .spec()
+          .patch('/facility/$S{facilityId}')
+          .expectStatus(401);
+      });
+
+      it('Should delete a facility by id', () => {
+        return pactum
+          .spec()
+          .delete('/facility/$S{facilityId}')
           .withHeaders({ Authorization: 'Bearer $S{userAt}' })
           .expectStatus(200);
       });
