@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsBoolean, IsDate, IsOptional, IsString } from 'class-validator';
+import { IsBoolean, IsDateString, IsOptional, IsString } from 'class-validator';
 
 export class UpdateTicketDto {
   @IsString()
@@ -7,12 +7,12 @@ export class UpdateTicketDto {
   @ApiProperty({ required: false })
   containerNumber?: string;
 
-  @IsDate()
+  @IsDateString()
   @IsOptional()
   @ApiProperty({ required: false })
   entryTime?: Date;
 
-  @IsDate()
+  @IsDateString()
   @IsOptional()
   @ApiProperty({ required: false })
   exitTime?: Date;
