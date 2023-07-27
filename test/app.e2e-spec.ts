@@ -9,6 +9,7 @@ import {
   UpdateOrganizationDto,
 } from 'src/organization/dto';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { CreateTicketDto } from 'src/ticket/dto';
 import { CreateTruckDto, UpdateTruckDto } from 'src/truck/dto';
 
 describe('App e2e', () => {
@@ -979,6 +980,143 @@ describe('App e2e', () => {
           .delete('/organizations/$S{organizationId}')
           .withHeaders({ Authorization: 'Bearer $S{userAt}' })
           .expectStatus(200);
+      });
+    });
+  });
+
+  describe('Ticket', () => {
+    describe('Create Ticket', () => {
+      const dto: CreateTicketDto = {
+        containerNumber: 'TEST123456',
+        entryTime: new Date('2023-07-27T10:00:00.000Z'),
+        exitTime: new Date('2023-07-27T10:00:00.000Z'),
+        truckId: '$S{truckId}',
+        facilityId: '$S{facilityId}',
+        organizationId: '$S{organizationId}',
+        isInvoiceCreated: false,
+      };
+
+      it('Should throw exception if facility empty', () => {
+        return pactum
+          .spec()
+          .post('/tickets')
+          .withHeaders({ Authorization: 'Bearer $S{userAt}' })
+          .withBody({
+            organizationId: dto.organizationId,
+            isInvoiceCreated: dto.isInvoiceCreated,
+          })
+          .expectStatus(400);
+      });
+
+      it('Should throw exception if organization empty', () => {
+        return pactum
+          .spec()
+          .post('/tickets')
+          .withHeaders({ Authorization: 'Bearer $S{userAt}' })
+          .withBody({
+            facilityId: dto.organizationId,
+            isInvoiceCreated: dto.isInvoiceCreated,
+          })
+          .expectStatus(400);
+      });
+
+      it('Should throw exception if invoice empty', () => {
+        return pactum
+          .spec()
+          .post('/tickets')
+          .withHeaders({ Authorization: 'Bearer $S{userAt}' })
+          .withBody({
+            facilityId: dto.facilityId,
+            organizationId: dto.organizationId,
+          })
+          .expectStatus(400);
+      });
+
+      it('Should throw exception if no body provided', () => {
+        return pactum
+          .spec()
+          .post('/tickets')
+          .withHeaders({ Authorization: 'Bearer $S{userAt}' })
+          .expectStatus(400);
+      });
+
+      it('Should throw exception if no auth provided', () => {
+        return pactum.spec().post('/tickets').expectStatus(401);
+      });
+
+      // FIXME: veritabanından önceki veriler silindiği için referans verileri hata veriyor
+      // it('Should create a new tickets', () => {
+      //   return pactum
+      //     .spec()
+      //     .post('/tickets')
+      //     .withHeaders({ Authorization: 'Bearer $S{userAt}' })
+      //     .withBody(dto)
+      //     .expectStatus(201)
+      //     .stores('ticketId', 'id')
+      //     .inspect();
+      // });
+    });
+
+    describe('Get Tickets', () => {
+      it('Should throw exception if no auth provided', () => {
+        return pactum.spec().get('/tickets').expectStatus(401);
+      });
+
+      // FIXME: ticket eklenemediği için hata veriyor
+      // it('Should get a all tickets', () => {
+      //   return pactum
+      //     .spec()
+      //     .get('/tickets')
+      //     .withHeaders({ Authorization: 'Bearer $S{userAt}' })
+      //     .expectStatus(200);
+      // });
+    });
+
+    describe('Get Tickets by Id', () => {
+      it('Should throw exception if there is no ticket by id', () => {
+        return pactum
+          .spec()
+          .get('/tickets/7')
+          .withHeaders({ Authorization: 'Bearer $S{userAt}' })
+          .expectStatus(403);
+      });
+
+      // FIXME: ticket eklenemediği için hata veriyor
+      // it('Should get a tickets by id', () => {
+      //   return pactum
+      //     .spec()
+      //     .get('/tickets/$S{ticketId}')
+      //     .withHeaders({ Authorization: 'Bearer $S{userAt}' })
+      //     .expectStatus(200);
+      // });
+    });
+
+    // tüm dto optional o yüzden yalnızca body ve auth kontrolü yeterli
+    describe('Update Tickets', () => {
+      it('Should throw exception if there is no tickets by id', () => {
+        return pactum
+          .spec()
+          .patch('/tickets/5')
+          .withHeaders({ Authorization: 'Bearer $S{userAt}' })
+          .expectStatus(403);
+      });
+
+      it('Should throw exception if no auth provided', () => {
+        return pactum.spec().patch('/tickets/5').expectStatus(401);
+      });
+    });
+
+    describe('Delete Tickets', () => {
+      it('Should throw exception if there is no tickets by id', () => {
+        return pactum
+          .spec()
+          .delete('/tickets/7')
+          .withHeaders({ Authorization: 'Bearer $S{userAt}' })
+          .expectStatus(403);
+      });
+
+      it('Should throw exception if no auth provided', () => {
+        return pactum.spec().delete('/tickets/5').expectStatus(401);
       });
     });
   });
