@@ -4,6 +4,10 @@ import * as pactum from 'pactum';
 import { AppModule } from 'src/app.module';
 import { SigninDto, SignupDto } from 'src/auth/dto';
 import { CreateFacilityDto, UpdateFacilityDto } from 'src/facility/dto';
+import {
+  CreateOrganizationDto,
+  UpdateOrganizationDto,
+} from 'src/organization/dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateTruckDto, UpdateTruckDto } from 'src/truck/dto';
 
@@ -681,7 +685,7 @@ describe('App e2e', () => {
       it('Should throw exception if no auth provided', () => {
         return pactum
           .spec()
-          .patch('/facility/$S{facilityId}')
+          .delete('/facility/$S{facilityId}')
           .expectStatus(401);
       });
 
@@ -689,6 +693,290 @@ describe('App e2e', () => {
         return pactum
           .spec()
           .delete('/facility/$S{facilityId}')
+          .withHeaders({ Authorization: 'Bearer $S{userAt}' })
+          .expectStatus(200);
+      });
+    });
+  });
+
+  describe('Organization', () => {
+    describe('Create Organization', () => {
+      const dto: CreateOrganizationDto = {
+        name: 'Test Organization',
+        taxNumber: '1234567890',
+        taxOffice: 'Test Tax Office',
+        address: 'Test Adress',
+        invoiceAddress: 'Test Invoice Adress',
+      };
+
+      it('Should throw exception if name empty', () => {
+        return pactum
+          .spec()
+          .post('/organizations')
+          .withHeaders({ Authorization: 'Bearer $S{userAt}' })
+          .withBody({
+            taxNumber: dto.taxNumber,
+            taxOffice: dto.taxOffice,
+            address: dto.address,
+            invoiceAddress: dto.invoiceAddress,
+          })
+          .expectStatus(400);
+      });
+
+      it('Should throw exception if tax number empty', () => {
+        return pactum
+          .spec()
+          .post('/organizations')
+          .withHeaders({ Authorization: 'Bearer $S{userAt}' })
+          .withBody({
+            name: dto.name,
+            taxOffice: dto.taxOffice,
+            address: dto.address,
+            invoiceAddress: dto.invoiceAddress,
+          })
+          .expectStatus(400);
+      });
+
+      it('Should throw exception if tax office empty', () => {
+        return pactum
+          .spec()
+          .post('/organizations')
+          .withHeaders({ Authorization: 'Bearer $S{userAt}' })
+          .withBody({
+            name: dto.name,
+            taxNumber: dto.taxNumber,
+            address: dto.address,
+            invoiceAddress: dto.invoiceAddress,
+          })
+          .expectStatus(400);
+      });
+
+      it('Should throw exception if adress empty', () => {
+        return pactum
+          .spec()
+          .post('/organizations')
+          .withHeaders({ Authorization: 'Bearer $S{userAt}' })
+          .withBody({
+            name: dto.name,
+            taxNumber: dto.taxNumber,
+            taxOffice: dto.taxOffice,
+            invoiceAddress: dto.invoiceAddress,
+          })
+          .expectStatus(400);
+      });
+
+      it('Should throw exception if invoice adress empty', () => {
+        return pactum
+          .spec()
+          .post('/organizations')
+          .withHeaders({ Authorization: 'Bearer $S{userAt}' })
+          .withBody({
+            name: dto.name,
+            taxNumber: dto.taxNumber,
+            taxOffice: dto.taxOffice,
+            address: dto.address,
+          })
+          .expectStatus(400);
+      });
+
+      it('Should throw exception if no body provided', () => {
+        return pactum
+          .spec()
+          .post('/organizations')
+          .withHeaders({ Authorization: 'Bearer $S{userAt}' })
+          .expectStatus(400);
+      });
+
+      it('Should throw exception if no auth provided', () => {
+        return pactum.spec().post('/organizations').expectStatus(401);
+      });
+
+      it('Should create a new organization', () => {
+        return pactum
+          .spec()
+          .post('/organizations')
+          .withHeaders({ Authorization: 'Bearer $S{userAt}' })
+          .withBody(dto)
+          .expectStatus(201)
+          .stores('organizationId', 'id');
+      });
+
+      //FIXME: 500 hatası yerine 403 hatası vermeli!
+      it('Should throw exception if tax number exist', () => {
+        return pactum
+          .spec()
+          .post('/organizations')
+          .withHeaders({ Authorization: 'Bearer $S{userAt}' })
+          .withBody(dto)
+          .expectStatus(500);
+      });
+    });
+
+    describe('Get Organization', () => {
+      it('Should throw exception if no auth provided', () => {
+        return pactum.spec().get('/organizations').expectStatus(401);
+      });
+
+      it('Should get a all organizations', () => {
+        return pactum
+          .spec()
+          .get('/organizations')
+          .withHeaders({ Authorization: 'Bearer $S{userAt}' })
+          .expectStatus(200);
+      });
+    });
+
+    describe('Get Organization by id', () => {
+      it('Should throw exception if there is no organization by id', () => {
+        return pactum
+          .spec()
+          .get('/organizations/7')
+          .withHeaders({ Authorization: 'Bearer $S{userAt}' })
+          .expectStatus(403);
+      });
+
+      it('Should get a organization by id', () => {
+        return pactum
+          .spec()
+          .get('/organizations/$S{organizationId}')
+          .withHeaders({ Authorization: 'Bearer $S{userAt}' })
+          .expectStatus(200);
+      });
+    });
+
+    describe('Update Organization', () => {
+      const dto: UpdateOrganizationDto = {
+        name: 'Updated Test Organization',
+        taxNumber: '1234567890',
+        taxOffice: 'Updated Test Tax Office',
+        address: 'Updated Test Adress',
+        invoiceAddress: 'Updated Test Invoice Adress',
+      };
+
+      it('Should throw exception if name empty', () => {
+        return pactum
+          .spec()
+          .patch('/organizations/$S{organizationId}')
+          .withHeaders({ Authorization: 'Bearer $S{userAt}' })
+          .withBody({
+            taxNumber: dto.taxNumber,
+            taxOffice: dto.taxOffice,
+            address: dto.address,
+            invoiceAddress: dto.invoiceAddress,
+          })
+          .expectStatus(400);
+      });
+
+      it('Should throw exception if tax number empty', () => {
+        return pactum
+          .spec()
+          .patch('/organizations/$S{organizationId}')
+          .withHeaders({ Authorization: 'Bearer $S{userAt}' })
+          .withBody({
+            name: dto.name,
+            taxOffice: dto.taxOffice,
+            address: dto.address,
+            invoiceAddress: dto.invoiceAddress,
+          })
+          .expectStatus(400);
+      });
+
+      it('Should throw exception if tax office empty', () => {
+        return pactum
+          .spec()
+          .patch('/organizations/$S{organizationId}')
+          .withHeaders({ Authorization: 'Bearer $S{userAt}' })
+          .withBody({
+            name: dto.name,
+            taxNumber: dto.taxNumber,
+            address: dto.address,
+            invoiceAddress: dto.invoiceAddress,
+          })
+          .expectStatus(400);
+      });
+
+      it('Should throw exception if address empty', () => {
+        return pactum
+          .spec()
+          .patch('/organizations/$S{organizationId}')
+          .withHeaders({ Authorization: 'Bearer $S{userAt}' })
+          .withBody({
+            name: dto.name,
+            taxNumber: dto.taxNumber,
+            taxOffice: dto.taxOffice,
+            invoiceAddress: dto.invoiceAddress,
+          })
+          .expectStatus(400);
+      });
+
+      it('Should throw exception if invoice address empty', () => {
+        return pactum
+          .spec()
+          .patch('/organizations/$S{organizationId}')
+          .withHeaders({ Authorization: 'Bearer $S{userAt}' })
+          .withBody({
+            name: dto.name,
+            taxNumber: dto.taxNumber,
+            taxOffice: dto.taxOffice,
+            address: dto.address,
+          })
+          .expectStatus(400);
+      });
+
+      it('Should throw exception if no body provided', () => {
+        return pactum
+          .spec()
+          .patch('/organizations/$S{organizationId}')
+          .withHeaders({ Authorization: 'Bearer $S{userAt}' })
+          .expectStatus(400);
+      });
+
+      it('Should throw exception if no auth provided', () => {
+        return pactum
+          .spec()
+          .patch('/organizations/$S{organizationId}')
+          .expectStatus(401);
+      });
+
+      it('Should update a organization by id', () => {
+        return pactum
+          .spec()
+          .patch('/organizations/$S{organizationId}')
+          .withHeaders({ Authorization: 'Bearer $S{userAt}' })
+          .withBody(dto)
+          .expectStatus(200);
+      });
+
+      it('Should throw exception if there is no organization by id', () => {
+        return pactum
+          .spec()
+          .patch('/organizations/7')
+          .withHeaders({ Authorization: 'Bearer $S{userAt}' })
+          .withBody(dto)
+          .expectStatus(403);
+      });
+    });
+
+    describe('Delete Organization', () => {
+      it('Should throw exception if there is no organization by id', () => {
+        return pactum
+          .spec()
+          .delete('/organizations/7')
+          .withHeaders({ Authorization: 'Bearer $S{userAt}' })
+          .expectStatus(403);
+      });
+
+      it('Should throw exception if no auth provided', () => {
+        return pactum
+          .spec()
+          .delete('/organizations/$S{organizationId}')
+          .expectStatus(401);
+      });
+
+      it('Should delete a organization by id', () => {
+        return pactum
+          .spec()
+          .delete('/organizations/$S{organizationId}')
           .withHeaders({ Authorization: 'Bearer $S{userAt}' })
           .expectStatus(200);
       });
