@@ -39,7 +39,3 @@ lerna-debug.log*
 .env.test
 .env.docker
 
-# database
-/prisma/db.sqlite
-/prisma/db.sqlite-journal
-/prisma/migrations

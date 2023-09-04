@@ -1,0 +1,5 @@
+-- AlterTable
+ALTER TABLE "Ticket" ALTER COLUMN "containerNumber" DROP NOT NULL,
+ALTER COLUMN "entryTime" DROP NOT NULL,
+ALTER COLUMN "exitTime" DROP NOT NULL,
+ALTER COLUMN "truckId" DROP NOT NULL;
