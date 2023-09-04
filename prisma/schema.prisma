@@ -17,10 +17,10 @@ model User {
   password      String
   name          String
   role          UserRole
-  trucks        Truck[]    
-  organizations Organization[]    
+  trucks        Truck[]
+  organizations Organization[]
   facilities    Facility[]
-  tickets       Ticket[] 
+  tickets       Ticket[]
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @updatedAt
 

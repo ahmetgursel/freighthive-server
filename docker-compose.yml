@@ -1,19 +1,5 @@
 version: '3.8'
 services:
-  app:
-    container_name: app
-    build:
-      context: .
-      dockerfile: Dockerfile
-    ports:
-      - 3333:3333
-    depends_on:
-      - db
-    environment:
-      - NODE_ENV=production
-    networks:
-      - freighthive-app
-
   db:
     container_name: db
     image: postgres:14.1-alpine
@@ -26,6 +12,16 @@ services:
       - '5432:5432'
     volumes:
       - db:/var/lib/postgresql/data
+    networks:
+      - freighthive-app
+
+  server:
+    container_name: server
+    image: freighthive-server
+    ports:
+      - '3333:3333'
+    depends_on:
+      - db
     networks:
       - freighthive-app
 

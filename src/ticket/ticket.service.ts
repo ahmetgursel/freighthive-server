@@ -40,6 +40,11 @@ export class TicketService {
         where: {
           createdById: userId,
         },
+        include: {
+          facility: true,
+          truck: true,
+          organization: true,
+        },
       });
 
       if (tickets.length === 0) {
