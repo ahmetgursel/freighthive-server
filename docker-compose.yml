@@ -4,6 +4,7 @@ services:
     container_name: db
     image: postgres:14.1-alpine
     restart: always
+    hostname: postgres
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=123456
@@ -12,8 +13,6 @@ services:
       - '5432:5432'
     volumes:
       - db:/var/lib/postgresql/data
-    networks:
-      - freighthive-app
 
   server:
     container_name: server
@@ -22,12 +21,6 @@ services:
       - '3333:3333'
     depends_on:
       - db
-    networks:
-      - freighthive-app
-
-networks:
-  freighthive-app:
-    driver: bridge
 
 volumes:
   db:

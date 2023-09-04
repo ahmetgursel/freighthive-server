@@ -32,8 +32,7 @@ COPY --from=builder /usr/app/prisma ./prisma
 
 COPY .env .
 
-
 EXPOSE 3333
 
 
-CMD node dist/main.js
+CMD [  "npm", "run", "start:migrate:prod" ]
