@@ -8,6 +8,6 @@ export class HealthcheckController {
   @Get()
   @ApiResponse({ status: HttpStatus.OK, description: 'App is working' })
   getHealthcheck() {
-    return { status: 'OK', message: 'App is working' };
+    return { status: 'OK' };
   }
 }
