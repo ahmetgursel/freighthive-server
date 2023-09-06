@@ -37,6 +37,9 @@ export class OrganizationService {
         where: {
           createdById: userId,
         },
+        orderBy: {
+          createdAt: 'desc',
+        },
       });
 
       // Eğer organizasyonlar boşsa, hata fırlat

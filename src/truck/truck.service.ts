@@ -36,6 +36,9 @@ export class TruckService {
       where: {
         createdById: userId,
       },
+      orderBy: {
+        createdAt: 'desc',
+      },
     });
 
     // TODO: check findMany return array or null

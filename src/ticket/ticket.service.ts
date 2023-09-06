@@ -45,6 +45,9 @@ export class TicketService {
           truck: true,
           organization: true,
         },
+        orderBy: {
+          createdAt: 'desc',
+        },
       });
 
       if (tickets.length === 0) {

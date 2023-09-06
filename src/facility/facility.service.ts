@@ -36,6 +36,9 @@ export class FacilityService {
         where: {
           createdById: userId,
         },
+        orderBy: {
+          createdAt: 'desc',
+        },
       });
 
       if (facilities.length === 0) {
