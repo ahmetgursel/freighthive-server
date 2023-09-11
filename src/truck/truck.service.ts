@@ -39,6 +39,9 @@ export class TruckService {
       orderBy: {
         createdAt: 'desc',
       },
+      include: {
+        tickets: true,
+      },
     });
 
     // TODO: check findMany return array or null
