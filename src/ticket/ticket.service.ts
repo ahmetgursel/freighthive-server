@@ -67,6 +67,11 @@ export class TicketService {
           createdById: userId,
           id: ticketId,
         },
+        include: {
+          facility: true,
+          truck: true,
+          organization: true,
+        },
       });
 
       if (!ticket) {
