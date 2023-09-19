@@ -1,4 +1,10 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateTruckDto, UpdateTruckDto } from './dto';
@@ -32,52 +38,63 @@ export class TruckService {
   }
 
   async getAllTrucks(userId: string) {
-    const trucks = await this.prisma.truck.findMany({
-      where: {
-        createdById: userId,
-      },
-      orderBy: {
-        createdAt: 'desc',
-      },
-      include: {
-        tickets: true,
-      },
-    });
+    try {
+      const trucks = await this.prisma.truck.findMany({
+        where: {
+          createdById: userId,
+        },
+        orderBy: {
+          createdAt: 'desc',
+        },
+        include: {
+          tickets: true,
+        },
+      });
 
-    // TODO: check findMany return array or null
-
-    if (!trucks) {
-      throw new Error('Failed to retrieve trucks.');
+      return trucks;
+    } catch (error) {
+      throw new InternalServerErrorException('Failed to retrieve trucks.');
     }
-
-    return trucks;
   }
 
   async getTruckById(userId: string, truckId: string) {
-    const truck = await this.prisma.truck.findFirst({
-      where: {
-        createdById: userId,
-        id: truckId,
-      },
-    });
+    try {
+      const truck = await this.prisma.truck.findFirst({
+        where: {
+          createdById: userId,
+          id: truckId,
+        },
+      });
 
-    if (!truck) {
-      throw new ForbiddenException('Truck not found.');
+      if (!truck) {
+        throw new NotFoundException('Truck not found.');
+      }
+      return truck;
+    } catch (error) {
+      if (error instanceof InternalServerErrorException) {
+        throw new InternalServerErrorException('Failed to retrieve trucks.');
+      } else {
+        throw error;
+      }
     }
-    return truck;
   }
 
   async updateTruckById(userId: string, truckId: string, dto: UpdateTruckDto) {
-    const truck = await this.prisma.truck.findUnique({
-      where: {
-        id: truckId,
-      },
-    });
-
-    if (!truck || truck.createdById !== userId)
-      throw new ForbiddenException('Access to resources denied');
-
     try {
+      const truck = await this.prisma.truck.findUnique({
+        where: {
+          id: truckId,
+        },
+      });
+
+      if (!truck) {
+        throw new NotFoundException('Truck not found.');
+      }
+
+      if (truck.createdById !== userId) {
+        throw new UnauthorizedException('Access to resources denied');
+      }
+
       const updatedTruck = await this.prisma.truck.update({
         where: { id: truckId },
         data: {
@@ -87,7 +104,11 @@ export class TruckService {
 
       return updatedTruck;
     } catch (error) {
-      throw new Error('Failed to update truck.');
+      if (error instanceof InternalServerErrorException) {
+        throw new InternalServerErrorException('Failed to update truck.');
+      } else {
+        throw error;
+      }
     }
   }
 
@@ -99,8 +120,13 @@ export class TruckService {
         },
       });
 
-      if (!truck || truck.createdById !== userId)
-        throw new ForbiddenException('Access to resources denied');
+      if (!truck) {
+        throw new NotFoundException('Truck not found.');
+      }
+
+      if (truck.createdById !== userId) {
+        throw new UnauthorizedException('Access to resources denied');
+      }
 
       await this.prisma.truck.delete({
         where: {
@@ -110,7 +136,11 @@ export class TruckService {
 
       return { message: 'Truck deleted successfully.' };
     } catch (error) {
-      throw new Error('Failed to delete truck.');
+      if (error instanceof InternalServerErrorException) {
+        throw new InternalServerErrorException('Failed to delete truck.');
+      } else {
+        throw error;
+      }
     }
   }
 }
