@@ -1,5 +1,11 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
+import {
+  ForbiddenException,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateFacilityDto, UpdateFacilityDto } from './dto';
 
@@ -9,7 +15,7 @@ export class FacilityService {
 
   async createNewFacility(dto: CreateFacilityDto, userId: string) {
     try {
-      const facility = this.prisma.facility.create({
+      const facility = await this.prisma.facility.create({
         data: {
           name: dto.name,
           address: dto.address,
@@ -41,13 +47,9 @@ export class FacilityService {
         },
       });
 
-      if (facilities.length === 0) {
-        throw new ForbiddenException('No facilities found for the given user.');
-      }
-
       return facilities;
     } catch (error) {
-      throw new ForbiddenException('Failed to retrieve facilities.');
+      throw new InternalServerErrorException('Failed to retrieve facilities.');
     }
   }
 
@@ -61,12 +63,18 @@ export class FacilityService {
       });
 
       if (!facility) {
-        throw new ForbiddenException('Facility not found');
+        throw new NotFoundException('Facility not found');
       }
 
       return facility;
     } catch (error) {
-      throw new ForbiddenException('Failed to retrieve facility.');
+      if (error instanceof InternalServerErrorException) {
+        throw new InternalServerErrorException(
+          'Failed to retrieve facilities.',
+        );
+      } else {
+        throw error;
+      }
     }
   }
 
@@ -82,8 +90,12 @@ export class FacilityService {
         },
       });
 
-      if (!facility || facility.createdById !== userId) {
-        throw new ForbiddenException('Access to resources denied.');
+      if (!facility) {
+        throw new NotFoundException('Facility not found');
+      }
+
+      if (facility.createdById !== userId) {
+        throw new UnauthorizedException('Access to resources denied.');
       }
 
       const updatedFacility = await this.prisma.facility.update({
@@ -97,7 +109,11 @@ export class FacilityService {
 
       return updatedFacility;
     } catch (error) {
-      throw new ForbiddenException('Failed to update facility.');
+      if (error instanceof InternalServerErrorException) {
+        throw new InternalServerErrorException('Failed to update facility.');
+      } else {
+        throw error;
+      }
     }
   }
 
@@ -107,8 +123,12 @@ export class FacilityService {
         where: { id: facilityId },
       });
 
-      if (!facility || facility.createdById !== userId) {
-        throw new ForbiddenException('Access to resources denied.');
+      if (!facility) {
+        throw new NotFoundException('Facility not found');
+      }
+
+      if (facility.createdById !== userId) {
+        throw new UnauthorizedException('Access to resources denied.');
       }
 
       await this.prisma.facility.delete({
@@ -119,7 +139,11 @@ export class FacilityService {
 
       return { message: 'Facility deleted successfully.' };
     } catch (error) {
-      throw new ForbiddenException('Failed to delete facility.');
+      if (error instanceof InternalServerErrorException) {
+        throw new InternalServerErrorException('Failed to delete facility.');
+      } else {
+        throw error;
+      }
     }
   }
 }
