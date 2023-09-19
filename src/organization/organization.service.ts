@@ -1,4 +1,10 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateOrganizationDto, UpdateOrganizationDto } from './dto';
@@ -9,7 +15,7 @@ export class OrganizationService {
 
   async createNewOrganization(dto: CreateOrganizationDto, userId: string) {
     try {
-      const organization = this.prisma.organization.create({
+      const organization = await this.prisma.organization.create({
         data: {
           name: dto.name,
           address: dto.address,
@@ -42,16 +48,11 @@ export class OrganizationService {
         },
       });
 
-      // Eğer organizasyonlar boşsa, hata fırlat
-      if (organizations.length === 0) {
-        throw new ForbiddenException(
-          'No organizations found for the given user.',
-        );
-      }
-
       return organizations;
     } catch (error) {
-      throw new ForbiddenException('Failed to retrieve organizations.');
+      throw new InternalServerErrorException(
+        'Failed to retrieve organizations.',
+      );
     }
   }
 
@@ -65,12 +66,18 @@ export class OrganizationService {
       });
 
       if (!organization) {
-        throw new ForbiddenException('Organization not found.');
+        throw new NotFoundException('Organization not found.');
       }
 
       return organization;
     } catch (error) {
-      throw new ForbiddenException('Failed to retrieve organization.');
+      if (error instanceof InternalServerErrorException) {
+        throw new InternalServerErrorException(
+          'Failed to retrieve organization.',
+        );
+      } else {
+        throw error;
+      }
     }
   }
 
@@ -86,8 +93,12 @@ export class OrganizationService {
         },
       });
 
-      if (!organization || organization.createdById !== userId) {
-        throw new ForbiddenException('Access to resources denied.');
+      if (!organization) {
+        throw new NotFoundException('Organization not found');
+      }
+
+      if (organization.createdById !== userId) {
+        throw new UnauthorizedException('Access to resources denied.');
       }
 
       const updatedOrganization = await this.prisma.organization.update({
@@ -99,7 +110,13 @@ export class OrganizationService {
 
       return updatedOrganization;
     } catch (error) {
-      throw new ForbiddenException('Failed to update organization.');
+      if (error instanceof InternalServerErrorException) {
+        throw new InternalServerErrorException(
+          'Failed to update organization.',
+        );
+      } else {
+        throw error;
+      }
     }
   }
 
@@ -111,8 +128,12 @@ export class OrganizationService {
         },
       });
 
-      if (!organization || organization.createdById !== userId) {
-        throw new ForbiddenException('Access to resources denied.');
+      if (!organization) {
+        throw new NotFoundException('Organization not found');
+      }
+
+      if (organization.createdById !== userId) {
+        throw new UnauthorizedException('Access to resources denied.');
       }
 
       await this.prisma.organization.delete({
@@ -123,7 +144,13 @@ export class OrganizationService {
 
       return { message: 'Organization deleted successfully.' };
     } catch (error) {
-      throw new ForbiddenException('Failed to delete organization.');
+      if (error instanceof InternalServerErrorException) {
+        throw new InternalServerErrorException(
+          'Failed to delete organization.',
+        );
+      } else {
+        throw error;
+      }
     }
   }
 }
