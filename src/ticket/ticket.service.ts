@@ -1,4 +1,10 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateTicketDto } from './dto';
@@ -10,7 +16,7 @@ export class TicketService {
 
   async createNewTicket(dto: CreateTicketDto, userId: string) {
     try {
-      const ticket = this.prisma.ticket.create({
+      const ticket = await this.prisma.ticket.create({
         data: {
           containerNumber: dto.containerNumber,
           entryTime: dto.entryTime,
@@ -50,13 +56,9 @@ export class TicketService {
         },
       });
 
-      if (tickets.length === 0) {
-        throw new ForbiddenException('No tickets found for the given user.');
-      }
-
       return tickets;
     } catch (error) {
-      throw new ForbiddenException('Failed to retrieve tickets.');
+      throw new InternalServerErrorException('Failed to retrieve tickets.');
     }
   }
 
@@ -75,12 +77,16 @@ export class TicketService {
       });
 
       if (!ticket) {
-        throw new ForbiddenException('Ticket not found.');
+        throw new NotFoundException('Ticket not found.');
       }
 
       return ticket;
     } catch (error) {
-      throw new ForbiddenException('Failed to retrieve ticket.');
+      if (error instanceof InternalServerErrorException) {
+        throw new InternalServerErrorException('Failed to retrieve ticket.');
+      } else {
+        throw error;
+      }
     }
   }
 
@@ -96,8 +102,12 @@ export class TicketService {
         },
       });
 
-      if (!ticket || ticket.createdById !== userId) {
-        throw new ForbiddenException('Ticket not found.');
+      if (!ticket) {
+        throw new NotFoundException('Ticket not found');
+      }
+
+      if (ticket.createdById !== userId) {
+        throw new UnauthorizedException('Access to resources denied.');
       }
 
       const updatedTicket = await this.prisma.ticket.update({
@@ -109,7 +119,11 @@ export class TicketService {
 
       return updatedTicket;
     } catch (error) {
-      throw new ForbiddenException('Failed to update ticket.');
+      if (error instanceof InternalServerErrorException) {
+        throw new InternalServerErrorException('Failed to update ticket.');
+      } else {
+        throw error;
+      }
     }
   }
 
@@ -121,8 +135,12 @@ export class TicketService {
         },
       });
 
-      if (!ticket || ticket.createdById !== userId) {
-        throw new ForbiddenException('Ticket not found.');
+      if (!ticket) {
+        throw new NotFoundException('Ticket not found');
+      }
+
+      if (ticket.createdById !== userId) {
+        throw new UnauthorizedException('Access to resources denied.');
       }
 
       await this.prisma.ticket.delete({
@@ -133,7 +151,11 @@ export class TicketService {
 
       return { message: 'Ticket deleted successfully.' };
     } catch (error) {
-      throw new ForbiddenException('Failed to delete ticket.');
+      if (error instanceof InternalServerErrorException) {
+        throw new InternalServerErrorException('Failed to delete ticket.');
+      } else {
+        throw error;
+      }
     }
   }
 }
