@@ -309,7 +309,7 @@ describe('App e2e', () => {
           .spec()
           .get('/trucks/7')
           .withHeaders({ Authorization: 'Bearer $S{userAt}' })
-          .expectStatus(403);
+          .expectStatus(404);
       });
 
       it('Should get a trucks by id', () => {
@@ -427,7 +427,7 @@ describe('App e2e', () => {
           .patch('/trucks/7')
           .withHeaders({ Authorization: 'Bearer $S{userAt}' })
           .withBody(dto)
-          .expectStatus(403);
+          .expectStatus(404);
       });
     });
 
@@ -437,7 +437,7 @@ describe('App e2e', () => {
           .spec()
           .delete('/trucks/7')
           .withHeaders({ Authorization: 'Bearer $S{userAt}' })
-          .expectStatus(500);
+          .expectStatus(404);
       });
 
       it('Should throw exception if no auth provided', () => {
@@ -537,14 +537,13 @@ describe('App e2e', () => {
           .stores('facilityId', 'id');
       });
 
-      //FIXME: 500 hatası yerine 403 hatası vermeli!
       it('Should throw exception if name exist', () => {
         return pactum
           .spec()
           .post('/facility')
           .withHeaders({ Authorization: 'Bearer $S{userAt}' })
           .withBody(dto)
-          .expectStatus(500);
+          .expectStatus(403);
       });
     });
 
@@ -568,7 +567,7 @@ describe('App e2e', () => {
           .spec()
           .get('/facility/7')
           .withHeaders({ Authorization: 'Bearer $S{userAt}' })
-          .expectStatus(403);
+          .expectStatus(404);
       });
 
       it('Should get a facility by id', () => {
@@ -670,7 +669,7 @@ describe('App e2e', () => {
           .patch('/facility/7')
           .withHeaders({ Authorization: 'Bearer $S{userAt}' })
           .withBody(dto)
-          .expectStatus(403);
+          .expectStatus(404);
       });
     });
 
@@ -680,7 +679,7 @@ describe('App e2e', () => {
           .spec()
           .delete('/facility/7')
           .withHeaders({ Authorization: 'Bearer $S{userAt}' })
-          .expectStatus(403);
+          .expectStatus(404);
       });
 
       it('Should throw exception if no auth provided', () => {
@@ -802,14 +801,13 @@ describe('App e2e', () => {
           .stores('organizationId', 'id');
       });
 
-      //FIXME: 500 hatası yerine 403 hatası vermeli!
       it('Should throw exception if tax number exist', () => {
         return pactum
           .spec()
           .post('/organizations')
           .withHeaders({ Authorization: 'Bearer $S{userAt}' })
           .withBody(dto)
-          .expectStatus(500);
+          .expectStatus(403);
       });
     });
 
@@ -833,7 +831,7 @@ describe('App e2e', () => {
           .spec()
           .get('/organizations/7')
           .withHeaders({ Authorization: 'Bearer $S{userAt}' })
-          .expectStatus(403);
+          .expectStatus(404);
       });
 
       it('Should get a organization by id', () => {
@@ -954,7 +952,7 @@ describe('App e2e', () => {
           .patch('/organizations/7')
           .withHeaders({ Authorization: 'Bearer $S{userAt}' })
           .withBody(dto)
-          .expectStatus(403);
+          .expectStatus(404);
       });
     });
 
@@ -964,7 +962,7 @@ describe('App e2e', () => {
           .spec()
           .delete('/organizations/7')
           .withHeaders({ Authorization: 'Bearer $S{userAt}' })
-          .expectStatus(403);
+          .expectStatus(404);
       });
 
       it('Should throw exception if no auth provided', () => {
@@ -1043,18 +1041,6 @@ describe('App e2e', () => {
       it('Should throw exception if no auth provided', () => {
         return pactum.spec().post('/tickets').expectStatus(401);
       });
-
-      // FIXME: veritabanından önceki veriler silindiği için referans verileri hata veriyor
-      // it('Should create a new tickets', () => {
-      //   return pactum
-      //     .spec()
-      //     .post('/tickets')
-      //     .withHeaders({ Authorization: 'Bearer $S{userAt}' })
-      //     .withBody(dto)
-      //     .expectStatus(201)
-      //     .stores('ticketId', 'id')
-      //     .inspect();
-      // });
     });
 
     describe('Get Tickets', () => {
@@ -1062,14 +1048,13 @@ describe('App e2e', () => {
         return pactum.spec().get('/tickets').expectStatus(401);
       });
 
-      // FIXME: ticket eklenemediği için hata veriyor
-      // it('Should get a all tickets', () => {
-      //   return pactum
-      //     .spec()
-      //     .get('/tickets')
-      //     .withHeaders({ Authorization: 'Bearer $S{userAt}' })
-      //     .expectStatus(200);
-      // });
+      it('Should get a all tickets', () => {
+        return pactum
+          .spec()
+          .get('/tickets')
+          .withHeaders({ Authorization: 'Bearer $S{userAt}' })
+          .expectStatus(200);
+      });
     });
 
     describe('Get Tickets by Id', () => {
@@ -1078,17 +1063,8 @@ describe('App e2e', () => {
           .spec()
           .get('/tickets/7')
           .withHeaders({ Authorization: 'Bearer $S{userAt}' })
-          .expectStatus(403);
+          .expectStatus(404);
       });
-
-      // FIXME: ticket eklenemediği için hata veriyor
-      // it('Should get a tickets by id', () => {
-      //   return pactum
-      //     .spec()
-      //     .get('/tickets/$S{ticketId}')
-      //     .withHeaders({ Authorization: 'Bearer $S{userAt}' })
-      //     .expectStatus(200);
-      // });
     });
 
     // tüm dto optional o yüzden yalnızca body ve auth kontrolü yeterli
@@ -1098,7 +1074,7 @@ describe('App e2e', () => {
           .spec()
           .patch('/tickets/5')
           .withHeaders({ Authorization: 'Bearer $S{userAt}' })
-          .expectStatus(403);
+          .expectStatus(404);
       });
 
       it('Should throw exception if no auth provided', () => {
@@ -1112,7 +1088,7 @@ describe('App e2e', () => {
           .spec()
           .delete('/tickets/7')
           .withHeaders({ Authorization: 'Bearer $S{userAt}' })
-          .expectStatus(403);
+          .expectStatus(404);
       });
 
       it('Should throw exception if no auth provided', () => {
